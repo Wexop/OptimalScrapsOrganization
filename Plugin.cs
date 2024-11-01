@@ -6,6 +6,7 @@ using LethalConfig.ConfigItems;
 using LethalConfig.ConfigItems.Options;
 using LethalLevelLoader;
 using OptimalScrapsOrganization.Patches;
+using OptimalScrapsOrganization.Scripts;
 
 namespace OptimalScrapsOrganization
 {
@@ -16,10 +17,12 @@ namespace OptimalScrapsOrganization
     {
         public const string GUID = "wexop.ship_item_reorder";
         public const string NAME = "ShipScrapReorder";
-        public const string VERSION = "1.0.0";
+        public const string VERSION = "1.0.1";
         
         public ConfigEntry<float> distanceBewteenObjects;
         public ConfigEntry<int> organiseDefaultValueRange;
+        public ConfigEntry<bool> autoReorderOnLeftMoon;
+        public ConfigEntry<OrganizeBy> defaultReorderType;
 
         public static OptimalScrapsOrganizationPlugin instance;
 
@@ -32,6 +35,7 @@ namespace OptimalScrapsOrganization
             LoadConfig();
                 
             Harmony.CreateAndPatchAll(typeof(PatchTerminal));
+            Harmony.CreateAndPatchAll(typeof(PatchStartOfRound));
 
             Logger.LogInfo("OptimalScrapsOrganization Patched !!");
         }
@@ -53,6 +57,20 @@ namespace OptimalScrapsOrganization
                 "Distance between each stacks of objects. No need to restart the game :)"
             );
             CreateIntConfig(organiseDefaultValueRange,1, 200);
+            
+            autoReorderOnLeftMoon = Config.Bind(
+                "General", "autoReorderOnLeftMoon", 
+                true, 
+                "Auto reorder scraps when leaving the moon. No need to restart the game :)"
+            );
+            CreateBoolConfig(autoReorderOnLeftMoon);
+            
+            defaultReorderType = Config.Bind(
+                "General", "defaultReorderType", 
+                OrganizeBy.VALUE, 
+                "Default reorder type. No need to restart the game :)"
+            );
+            CreateOrganiseByConfig(defaultReorderType);
         }
 
         private void CreateFloatConfig(ConfigEntry<float> configEntry, float min = 0f, float max = 100f)
@@ -92,6 +110,12 @@ namespace OptimalScrapsOrganization
             {
                 RequiresRestart = false
             });
+            LethalConfigManager.AddConfigItem(exampleSlider);
+        }
+
+        private void CreateOrganiseByConfig(ConfigEntry<OrganizeBy> configEntry)
+        {
+            var exampleSlider = new EnumDropDownConfigItem<OrganizeBy>(configEntry, false);
             LethalConfigManager.AddConfigItem(exampleSlider);
         }
 

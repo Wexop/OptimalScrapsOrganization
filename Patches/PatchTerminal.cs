@@ -24,11 +24,15 @@ public class PatchTerminal
                 return false;
             }
 
-            OrganizeBy organizeBy = OrganizeBy.VALUE;
+            OrganizeBy organizeBy = OptimalScrapsOrganizationPlugin.instance.defaultReorderType.Value;
             var value = OptimalScrapsOrganizationPlugin.instance.organiseDefaultValueRange.Value;
             
             if(array.Length > 1 && array[1].ToLower().Contains("name")) organizeBy = OrganizeBy.NAME;
-            if (array.Length > 1) int.TryParse(array[1], out value);
+            else if (array.Length > 1)
+            {
+                organizeBy = OrganizeBy.VALUE;
+                int.TryParse(array[1], out value);
+            }
 
             OrganizeInformation organizeInformation = new OrganizeInformation();
             organizeInformation.OrganizeBy = organizeBy;
