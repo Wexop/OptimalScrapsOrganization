@@ -88,6 +88,11 @@ public class ScrapsOrganizationManager
         var usePostion = basePos;
         var valueRange = 0;
 
+        while (valueRange < scrapsOnShip[0].scrapValue)
+        {
+            valueRange += value;
+        }
+
         var index = -1;
         
         scrapsOnShip.ForEach(scrap =>
@@ -109,11 +114,15 @@ public class ScrapsOrganizationManager
             scrap.transform.eulerAngles = Vector3.zero + scrap.itemProperties.restingRotation;
 
             if (organizeBy == OrganizeBy.NAME && index < scrapsOnShip.Count - 1 &&  scrap.itemProperties.itemName == scrapsOnShip[index+1].itemProperties.itemName) return;
-            if (organizeBy == OrganizeBy.VALUE && scrap.scrapValue <= valueRange ) return;
-            
-            
-            
-            valueRange += value;
+            if (organizeBy == OrganizeBy.VALUE && index < scrapsOnShip.Count - 1  && scrapsOnShip[index + 1].scrapValue <= valueRange ) return;
+
+            if (index < scrapsOnShip.Count - 1 )
+            {
+                while (valueRange < scrapsOnShip[index + 1].scrapValue)
+                {
+                    valueRange += value;
+                }
+            }
 
             usePostion += new Vector3(organizeInformation.distanceBetweenObjects, 0, 0);
 
