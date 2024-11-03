@@ -17,11 +17,17 @@ namespace OptimalScrapsOrganization
     {
         public const string GUID = "wexop.ship_item_reorder";
         public const string NAME = "ShipScrapReorder";
-        public const string VERSION = "1.0.1";
+        public const string VERSION = "1.0.2";
+
+        public bool hasPatchedStartTerminal;
         
-        public ConfigEntry<float> distanceBewteenObjects;
+        public ConfigEntry<float> distanceBetweenScraps;
+        public ConfigEntry<float> rotationBetweenScraps;
         public ConfigEntry<int> organiseDefaultValueRange;
         public ConfigEntry<bool> autoReorderOnLeftMoon;
+        public ConfigEntry<bool> rotateScraps;
+        public ConfigEntry<bool> orderShopItems;
+        public ConfigEntry<string> exclusionList;
         public ConfigEntry<OrganizeBy> defaultReorderType;
 
         public static OptimalScrapsOrganizationPlugin instance;
@@ -44,12 +50,19 @@ namespace OptimalScrapsOrganization
         {
             
             //GENERAL
-            distanceBewteenObjects = Config.Bind(
-                "General", "distanceBewteenObjects", 
-                0.6f, 
-                "Distance between each stacks of objects. No need to restart the game :)"
+            exclusionList = Config.Bind(
+                "General", "exclusionList", 
+                "", 
+                "List of items not affected by reorder. Example : shovel,airhorn. No need to restart the game :)"
             );
-            CreateFloatConfig(distanceBewteenObjects,0f, 5f);
+            CreateStringConfig(exclusionList);
+            
+            distanceBetweenScraps = Config.Bind(
+                "General", "distanceBetweenScraps", 
+                1.1f, 
+                "Distance between each stacks of scraps. No need to restart the game :)"
+            );
+            CreateFloatConfig(distanceBetweenScraps,0f, 5f);
             
             organiseDefaultValueRange = Config.Bind(
                 "General", "organiseDefaultValueRange", 
@@ -58,6 +71,13 @@ namespace OptimalScrapsOrganization
             );
             CreateIntConfig(organiseDefaultValueRange,1, 200);
             
+            defaultReorderType = Config.Bind(
+                "General", "defaultReorderType", 
+                OrganizeBy.VALUE, 
+                "Default reorder type. No need to restart the game :)"
+            );
+            CreateOrganiseByConfig(defaultReorderType);
+            
             autoReorderOnLeftMoon = Config.Bind(
                 "General", "autoReorderOnLeftMoon", 
                 true, 
@@ -65,12 +85,28 @@ namespace OptimalScrapsOrganization
             );
             CreateBoolConfig(autoReorderOnLeftMoon);
             
-            defaultReorderType = Config.Bind(
-                "General", "defaultReorderType", 
-                OrganizeBy.VALUE, 
-                "Default reorder type. No need to restart the game :)"
+            rotateScraps = Config.Bind(
+                "General", "rotateScraps", 
+                true, 
+                "Rotate scraps so you can see how many of them are in a stack. No need to restart the game :)"
             );
-            CreateOrganiseByConfig(defaultReorderType);
+            CreateBoolConfig(rotateScraps);
+            
+            rotationBetweenScraps = Config.Bind(
+                "General", "rotationBetweenScraps", 
+                10f, 
+                "Rotate scraps so you can see how many of them are in a stack. No need to restart the game :)"
+            );
+            CreateFloatConfig(rotationBetweenScraps);
+            
+            orderShopItems = Config.Bind(
+                "General", "orderShopItems", 
+                true, 
+                "Reorder affect shop items (flashlights, shovel, jetpack...). No need to restart the game :)"
+            );
+            CreateBoolConfig(orderShopItems);
+            
+
         }
 
         private void CreateFloatConfig(ConfigEntry<float> configEntry, float min = 0f, float max = 100f)

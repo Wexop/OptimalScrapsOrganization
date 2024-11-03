@@ -1,6 +1,6 @@
 {
   "name": "ShipScrapReorder",
-  "version_number": "1.0.1",
+  "version_number": "1.0.2",
   "website_url": "https://github.com/Wexop/OptimalScrapsOrganization",
   "description": "[v60+] Add commands on terminal to reorder quickly your scraps on the ship, by value and name !",
   "dependencies": [

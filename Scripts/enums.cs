@@ -3,5 +3,6 @@
 public enum OrganizeBy
 {
     VALUE,
-    NAME
+    NAME,
+    TYPE,
 }

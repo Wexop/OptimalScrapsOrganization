@@ -15,7 +15,11 @@ public class PatchStartOfRound
             OrganizeInformation organizeInformation = new OrganizeInformation();
             organizeInformation.OrganizeBy = OptimalScrapsOrganizationPlugin.instance.defaultReorderType.Value;
             organizeInformation.value = OptimalScrapsOrganizationPlugin.instance.organiseDefaultValueRange.Value;
-            organizeInformation.distanceBetweenObjects = OptimalScrapsOrganizationPlugin.instance.distanceBewteenObjects.Value;
+            organizeInformation.distanceBetweenObjects = OptimalScrapsOrganizationPlugin.instance.distanceBetweenScraps.Value;
+            organizeInformation.rotateScraps = OptimalScrapsOrganizationPlugin.instance.rotateScraps.Value;
+            organizeInformation.rotationBetweenScraps = OptimalScrapsOrganizationPlugin.instance.rotationBetweenScraps.Value;
+            organizeInformation.exclusionList = OptimalScrapsOrganizationPlugin.instance.exclusionList.Value;
+            organizeInformation.orderShopItems = OptimalScrapsOrganizationPlugin.instance.orderShopItems.Value;
             NetworkOrganization.OrganizeScrapsClientRpc(organizeInformation);
         }
     }
