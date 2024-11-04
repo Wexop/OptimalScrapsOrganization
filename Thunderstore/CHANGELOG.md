@@ -1,5 +1,10 @@
 # Changelog
 
+### v1.0.3
+
+- Fix items fall on ground when they are placed (on locker for example) and you run reorder command
+- (Config enabled by default) Add a config to reorder or not placed items
+
 ### v1.0.2
 
 - Fix help command text added each time a game is started

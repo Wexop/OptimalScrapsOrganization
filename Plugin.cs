@@ -17,7 +17,7 @@ namespace OptimalScrapsOrganization
     {
         public const string GUID = "wexop.ship_item_reorder";
         public const string NAME = "ShipScrapReorder";
-        public const string VERSION = "1.0.2";
+        public const string VERSION = "1.0.3";
 
         public bool hasPatchedStartTerminal;
         
@@ -27,6 +27,7 @@ namespace OptimalScrapsOrganization
         public ConfigEntry<bool> autoReorderOnLeftMoon;
         public ConfigEntry<bool> rotateScraps;
         public ConfigEntry<bool> orderShopItems;
+        public ConfigEntry<bool> orderPlacedItems;
         public ConfigEntry<string> exclusionList;
         public ConfigEntry<OrganizeBy> defaultReorderType;
 
@@ -52,7 +53,7 @@ namespace OptimalScrapsOrganization
             //GENERAL
             exclusionList = Config.Bind(
                 "General", "exclusionList", 
-                "", 
+                "clipboard,stickynote", 
                 "List of items not affected by reorder. Example : shovel,airhorn. No need to restart the game :)"
             );
             CreateStringConfig(exclusionList);
@@ -105,6 +106,13 @@ namespace OptimalScrapsOrganization
                 "Reorder affect shop items (flashlights, shovel, jetpack...). No need to restart the game :)"
             );
             CreateBoolConfig(orderShopItems);
+            
+            orderPlacedItems = Config.Bind(
+                "General", "orderPlacedItems", 
+                true, 
+                "Reorder placed items, for example in locker. No need to restart the game :)"
+            );
+            CreateBoolConfig(orderPlacedItems);
             
 
         }

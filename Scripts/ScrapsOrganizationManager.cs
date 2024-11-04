@@ -122,6 +122,7 @@ public class ScrapsOrganizationManager
         {
             index++;
             if(scrap == null) return;
+            if(!organizeInformation.orderPlacedItems && scrap.transform.parent != HangarShipTransform) return;
 
             if (usePostion.z < maxPostionRight.z)
             {
@@ -135,6 +136,8 @@ public class ScrapsOrganizationManager
             
             scrap.targetFloorPosition = usePostion;
             scrap.transform.eulerAngles = Vector3.zero + scrap.itemProperties.restingRotation;
+            scrap.transform.parent = HangarShipTransform;
+            if(scrap?.transform.parent) Debug.Log($"{scrap?.transform.parent.name} IS TRANSFORM PARENT NAME");
             if (organizeInformation.rotateScraps)
             {
                 scrap.transform.eulerAngles += new Vector3(0, rotation, 0);

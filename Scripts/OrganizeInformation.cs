@@ -9,4 +9,5 @@ public class OrganizeInformation
     public float rotationBetweenScraps;
     public string exclusionList;
     public bool orderShopItems;
+    public bool orderPlacedItems;
 }
