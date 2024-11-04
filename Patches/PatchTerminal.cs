@@ -57,8 +57,7 @@ public class PatchTerminal
     [HarmonyPriority(Priority.Last)]
     private static void StartPatch(ref TerminalNodesList ___terminalNodes)
     {
-        
-        if(OptimalScrapsOrganizationPlugin.instance.hasPatchedStartTerminal) return;
+        if(OptimalScrapsOrganizationPlugin.instance.hasPatchedStartTerminal || OptimalScrapsOrganizationPlugin.instance.hideHelpMessage.Value) return;
         
         int index = 1;
         string defaultMessage = ___terminalNodes.specialNodes[index].displayText;

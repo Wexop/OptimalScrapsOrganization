@@ -17,7 +17,7 @@ namespace OptimalScrapsOrganization
     {
         public const string GUID = "wexop.ship_item_reorder";
         public const string NAME = "ShipScrapReorder";
-        public const string VERSION = "1.0.3";
+        public const string VERSION = "1.0.4";
 
         public bool hasPatchedStartTerminal;
         
@@ -28,6 +28,7 @@ namespace OptimalScrapsOrganization
         public ConfigEntry<bool> rotateScraps;
         public ConfigEntry<bool> orderShopItems;
         public ConfigEntry<bool> orderPlacedItems;
+        public ConfigEntry<bool> hideHelpMessage;
         public ConfigEntry<string> exclusionList;
         public ConfigEntry<OrganizeBy> defaultReorderType;
 
@@ -113,6 +114,13 @@ namespace OptimalScrapsOrganization
                 "Reorder placed items, for example in locker. No need to restart the game :)"
             );
             CreateBoolConfig(orderPlacedItems);
+            
+            hideHelpMessage = Config.Bind(
+                "General", "hideHelpMessage", 
+                false, 
+                "Hide help command message. No need to restart the game :)"
+            );
+            CreateBoolConfig(hideHelpMessage);
             
 
         }

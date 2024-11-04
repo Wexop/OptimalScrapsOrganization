@@ -1,5 +1,9 @@
 # Changelog
 
+### v1.0.4
+
+- (Config disabled by default) Add config to hide help command message
+
 ### v1.0.3
 
 - Fix items fall on ground when they are placed (on locker for example) and you run reorder command
