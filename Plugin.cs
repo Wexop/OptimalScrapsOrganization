@@ -17,7 +17,7 @@ namespace OptimalScrapsOrganization
     {
         public const string GUID = "wexop.ship_item_reorder";
         public const string NAME = "ShipScrapReorder";
-        public const string VERSION = "1.0.4";
+        public const string VERSION = "1.0.5";
 
         public bool hasPatchedStartTerminal;
         

@@ -20,15 +20,28 @@ public class PatchTerminal
 
             if (array.Length > 1 && array[1].ToLower().Contains("help"))
             {
-                __result = CreateTerminalNode("Commands :\n\n- reorder\n\n- reorder <valueRange>\n\n- reorder name\n\n- reorder type\n\n");
+                __result = CreateTerminalNode("Commands :\n\n- reorder\n\n- reorder <valueRange>\n\n- reorder name\n\n- reorder type\n\n- reorder locker\n\n");
                 return false;
             }
 
             OrganizeBy organizeBy = OptimalScrapsOrganizationPlugin.instance.defaultReorderType.Value;
+            OrganizeBy? secondOrganizeBy = null;
             var value = OptimalScrapsOrganizationPlugin.instance.organiseDefaultValueRange.Value;
             
             if(array.Length > 1 && array[1].ToLower().Contains("name")) organizeBy = OrganizeBy.NAME;
             else if(array.Length > 1 && array[1].ToLower().Contains("type")) organizeBy = OrganizeBy.TYPE;
+            else if(array.Length > 1 && array[1].ToLower().Contains("locker"))
+            {
+                organizeBy = OrganizeBy.LOCKER;
+                secondOrganizeBy = OptimalScrapsOrganizationPlugin.instance.defaultReorderType.Value;
+                if(array.Length > 2 && array[2].ToLower().Contains("name")) secondOrganizeBy = OrganizeBy.NAME;
+                else if(array.Length > 2 && array[2].ToLower().Contains("type")) secondOrganizeBy = OrganizeBy.TYPE;
+                else if(array.Length > 2)
+                {
+                    secondOrganizeBy = OrganizeBy.VALUE;
+                    int.TryParse(array[1], out value);
+                };
+            }
             else if (array.Length > 1)
             {
                 organizeBy = OrganizeBy.VALUE;
@@ -37,6 +50,7 @@ public class PatchTerminal
 
             OrganizeInformation organizeInformation = new OrganizeInformation();
             organizeInformation.OrganizeBy = organizeBy;
+            organizeInformation.SecondOrganizeBy = secondOrganizeBy;
             organizeInformation.value = value;
             organizeInformation.distanceBetweenObjects = OptimalScrapsOrganizationPlugin.instance.distanceBetweenScraps.Value;
             organizeInformation.rotateScraps = OptimalScrapsOrganizationPlugin.instance.rotateScraps.Value;
@@ -44,6 +58,7 @@ public class PatchTerminal
             organizeInformation.exclusionList = OptimalScrapsOrganizationPlugin.instance.exclusionList.Value;
             organizeInformation.orderShopItems = OptimalScrapsOrganizationPlugin.instance.orderShopItems.Value;
             organizeInformation.orderPlacedItems = OptimalScrapsOrganizationPlugin.instance.orderPlacedItems.Value;
+        
             
             NetworkOrganization.OrganizeScrapsServerRpc(organizeInformation);
             __result = CreateTerminalNode("Done !");

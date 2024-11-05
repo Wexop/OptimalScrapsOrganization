@@ -81,7 +81,7 @@ public class ScrapsOrganizationManager
         var scrapsOnShip = GetScrapFromShip(organizeInformation);
 
         var value = organizeInformation.value;
-        var organizeBy = organizeInformation.OrganizeBy;
+        var organizeBy = organizeInformation.OrganizeBy == OrganizeBy.LOCKER ? organizeInformation.SecondOrganizeBy : organizeInformation.OrganizeBy;
 
         if (value <= 0) value = 1;
 
@@ -106,10 +106,31 @@ public class ScrapsOrganizationManager
         
         if(scrapsOnShip.Count == 0) return;
         
-        var basePos = position;
+        var inititalPosition = position;
+        var basePos = inititalPosition;
         var usePostion = basePos;
         var valueRange = 0;
         var rotation = 0f;
+        var maxPosZ = maxPostionRight.z;
+        var maxPosX = maxPosition.x;
+        
+        List<Collider> colliders = new List<Collider>();
+        
+
+        if (organizeInformation.OrganizeBy == OrganizeBy.LOCKER)
+        {
+            List<PlaceableObjectsSurface> placeableObjectsSurfaces =
+                HangarShipTransform.GetComponentsInChildren<PlaceableObjectsSurface>().ToList();
+
+            if (placeableObjectsSurfaces.Count > 0)
+            {
+                
+                placeableObjectsSurfaces.ForEach(p =>
+                {
+                    if (p.placeableBounds) colliders.Add(p.placeableBounds);
+                });
+            }
+        }
 
         while (valueRange < scrapsOnShip[0].scrapValue)
         {
@@ -117,6 +138,17 @@ public class ScrapsOrganizationManager
         }
 
         var index = -1;
+        int lockerIndex = 0;
+        int maxLockerIndex = colliders.Count - 1;
+
+        if (colliders.Count > 0)
+        {
+            Debug.Log($"PLACES COUNT {colliders.Count}");
+            colliders.Sort((x, y) => x.transform.position.y.CompareTo(y.transform.position.y));
+            inititalPosition = usePostion = basePos = colliders[lockerIndex].transform.localPosition - new Vector3(colliders[lockerIndex].bounds.extents.x,0, colliders[lockerIndex].bounds.size.z);
+            maxPosX = inititalPosition.x + colliders[lockerIndex].bounds.size.x * 2;
+            organizeInformation.distanceBetweenObjects = 1f;
+        }
         
         scrapsOnShip.ForEach(scrap =>
         {
@@ -124,20 +156,53 @@ public class ScrapsOrganizationManager
             if(scrap == null) return;
             if(!organizeInformation.orderPlacedItems && scrap.transform.parent != HangarShipTransform) return;
 
-            if (usePostion.z < maxPostionRight.z)
+            if (usePostion.z < maxPosZ)
             {
-                usePostion = position;
+                usePostion = inititalPosition;
             }
-            if (usePostion.x > maxPosition.x)
+            if (usePostion.x > maxPosX)
             {
-                basePos += new Vector3(0,0, -organizeInformation.distanceBetweenObjects);
+
+                if (organizeInformation.OrganizeBy == OrganizeBy.LOCKER)
+                {
+                    if (lockerIndex + 1 <= maxLockerIndex) lockerIndex++;
+                    else lockerIndex = 0;
+                    basePos = colliders[lockerIndex].transform.localPosition - new Vector3(colliders[lockerIndex].bounds.size.x,0, colliders[lockerIndex].bounds.size.z);
+                    maxPosX = basePos.x + colliders[lockerIndex].bounds.size.x * 2;
+                    
+                    Debug.Log($"NEW LOCKER INDEX {lockerIndex} POS {basePos}");
+
+                }
+                else
+                {
+                    basePos += new Vector3(0,0, -organizeInformation.distanceBetweenObjects);
+                    
+                }
+                
                 usePostion = basePos;
             }
+
+            var positionWithOffset = usePostion + Vector3.up * scrap.itemProperties.verticalOffset;
             
-            scrap.targetFloorPosition = usePostion;
+            scrap.targetFloorPosition = positionWithOffset;
+
             scrap.transform.eulerAngles = Vector3.zero + scrap.itemProperties.restingRotation;
             scrap.transform.parent = HangarShipTransform;
-            if(scrap?.transform.parent) Debug.Log($"{scrap?.transform.parent.name} IS TRANSFORM PARENT NAME");
+            
+            if (organizeInformation.OrganizeBy == OrganizeBy.LOCKER)
+            {
+                var parentObject = colliders.Count > 0 ? colliders[lockerIndex].transform.parent : HangarShipTransform;
+                PlayerPhysicsRegion componentInChildren = parentObject.GetComponentInChildren<PlayerPhysicsRegion>();
+                if ((UnityEngine.Object) componentInChildren != (UnityEngine.Object) null && componentInChildren.allowDroppingItems)
+                    parentObject = componentInChildren.physicsTransform;
+                scrap.transform.SetParent(parentObject, true);
+                scrap.startFallingPosition = scrap.transform.localPosition;
+                scrap.transform.localPosition = positionWithOffset;
+                scrap.targetFloorPosition = positionWithOffset;
+                scrap.EnablePhysics(true);
+                scrap.EnableItemMeshes(true);
+            }
+            
             if (organizeInformation.rotateScraps)
             {
                 scrap.transform.eulerAngles += new Vector3(0, rotation, 0);

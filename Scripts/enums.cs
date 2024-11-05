@@ -5,4 +5,5 @@ public enum OrganizeBy
     VALUE,
     NAME,
     TYPE,
+    LOCKER
 }

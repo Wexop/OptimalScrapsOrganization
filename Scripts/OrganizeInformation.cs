@@ -3,6 +3,7 @@
 public class OrganizeInformation
 {
     public OrganizeBy OrganizeBy;
+    public OrganizeBy? SecondOrganizeBy = null;
     public int value;
     public float distanceBetweenObjects;
     public bool rotateScraps;
