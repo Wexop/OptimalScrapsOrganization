@@ -21,6 +21,7 @@ public class PatchStartOfRound
             organizeInformation.exclusionList = OptimalScrapsOrganizationPlugin.instance.exclusionList.Value;
             organizeInformation.orderShopItems = OptimalScrapsOrganizationPlugin.instance.orderShopItems.Value;
             organizeInformation.orderPlacedItems = OptimalScrapsOrganizationPlugin.instance.orderPlacedItems.Value;
+            organizeInformation.distanceBetweenScrapsInLocker = OptimalScrapsOrganizationPlugin.instance.distanceBetweenScrapsInLocker.Value;
             NetworkOrganization.OrganizeScrapsClientRpc(organizeInformation);
         }
     }

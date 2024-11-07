@@ -127,7 +127,7 @@ public class ScrapsOrganizationManager
                 
                 placeableObjectsSurfaces.ForEach(p =>
                 {
-                    if (p.placeableBounds) colliders.Add(p.placeableBounds);
+                    colliders.Add(p.GetComponent<Collider>());
                 });
             }
         }
@@ -143,11 +143,10 @@ public class ScrapsOrganizationManager
 
         if (colliders.Count > 0)
         {
-            Debug.Log($"PLACES COUNT {colliders.Count}");
-            colliders.Sort((x, y) => x.transform.position.y.CompareTo(y.transform.position.y));
-            inititalPosition = usePostion = basePos = colliders[lockerIndex].transform.localPosition - new Vector3(colliders[lockerIndex].bounds.extents.x,0, colliders[lockerIndex].bounds.size.z);
+            colliders.Sort((x, y) => y.transform.position.y.CompareTo(x.transform.position.y));
+            inititalPosition = usePostion = basePos = colliders[lockerIndex].transform.localPosition - new Vector3(colliders[lockerIndex].bounds.size.x -0.2f ,0, 0 );
             maxPosX = inititalPosition.x + colliders[lockerIndex].bounds.size.x * 2;
-            organizeInformation.distanceBetweenObjects = 1f;
+            organizeInformation.distanceBetweenObjects = organizeInformation.distanceBetweenScrapsInLocker;
         }
         
         scrapsOnShip.ForEach(scrap =>
@@ -167,11 +166,8 @@ public class ScrapsOrganizationManager
                 {
                     if (lockerIndex + 1 <= maxLockerIndex) lockerIndex++;
                     else lockerIndex = 0;
-                    basePos = colliders[lockerIndex].transform.localPosition - new Vector3(colliders[lockerIndex].bounds.size.x,0, colliders[lockerIndex].bounds.size.z);
+                    basePos = colliders[lockerIndex].transform.localPosition - new Vector3(colliders[lockerIndex].bounds.size.x  - 0.2f ,0,0 );
                     maxPosX = basePos.x + colliders[lockerIndex].bounds.size.x * 2;
-                    
-                    Debug.Log($"NEW LOCKER INDEX {lockerIndex} POS {basePos}");
-
                 }
                 else
                 {
@@ -182,7 +178,7 @@ public class ScrapsOrganizationManager
                 usePostion = basePos;
             }
 
-            var positionWithOffset = usePostion + Vector3.up * scrap.itemProperties.verticalOffset;
+            var positionWithOffset = usePostion + new Vector3(0,0,0) * scrap.itemProperties.verticalOffset; 
             
             scrap.targetFloorPosition = positionWithOffset;
 
@@ -195,12 +191,9 @@ public class ScrapsOrganizationManager
                 PlayerPhysicsRegion componentInChildren = parentObject.GetComponentInChildren<PlayerPhysicsRegion>();
                 if ((UnityEngine.Object) componentInChildren != (UnityEngine.Object) null && componentInChildren.allowDroppingItems)
                     parentObject = componentInChildren.physicsTransform;
-                scrap.transform.SetParent(parentObject, true);
-                scrap.startFallingPosition = scrap.transform.localPosition;
                 scrap.transform.localPosition = positionWithOffset;
+                scrap.transform.SetParent(parentObject);
                 scrap.targetFloorPosition = positionWithOffset;
-                scrap.EnablePhysics(true);
-                scrap.EnableItemMeshes(true);
             }
             
             if (organizeInformation.rotateScraps)

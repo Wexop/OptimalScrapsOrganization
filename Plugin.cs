@@ -22,6 +22,7 @@ namespace OptimalScrapsOrganization
         public bool hasPatchedStartTerminal;
         
         public ConfigEntry<float> distanceBetweenScraps;
+        public ConfigEntry<float> distanceBetweenScrapsInLocker;
         public ConfigEntry<float> rotationBetweenScraps;
         public ConfigEntry<int> organiseDefaultValueRange;
         public ConfigEntry<bool> autoReorderOnLeftMoon;
@@ -31,6 +32,7 @@ namespace OptimalScrapsOrganization
         public ConfigEntry<bool> hideHelpMessage;
         public ConfigEntry<string> exclusionList;
         public ConfigEntry<OrganizeBy> defaultReorderType;
+        public ConfigEntry<OrganizeBy> defaultLockerReorderType;
 
         public static OptimalScrapsOrganizationPlugin instance;
 
@@ -66,6 +68,13 @@ namespace OptimalScrapsOrganization
             );
             CreateFloatConfig(distanceBetweenScraps,0f, 5f);
             
+            distanceBetweenScrapsInLocker = Config.Bind(
+                "General", "distanceBetweenScrapsInLocker", 
+                0.45f, 
+                "Distance between each stacks of scraps in locker. No need to restart the game :)"
+            );
+            CreateFloatConfig(distanceBetweenScrapsInLocker,0f, 5f);
+            
             organiseDefaultValueRange = Config.Bind(
                 "General", "organiseDefaultValueRange", 
                 20, 
@@ -79,6 +88,13 @@ namespace OptimalScrapsOrganization
                 "Default reorder type. No need to restart the game :)"
             );
             CreateOrganiseByConfig(defaultReorderType);
+            
+            defaultLockerReorderType = Config.Bind(
+                "General", "defaultLockerReorderType", 
+                OrganizeBy.VALUE, 
+                "Default reorder type for locker. No need to restart the game :)"
+            );
+            CreateOrganiseByConfig(defaultLockerReorderType);
             
             autoReorderOnLeftMoon = Config.Bind(
                 "General", "autoReorderOnLeftMoon", 

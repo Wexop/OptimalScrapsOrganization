@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System.Collections.Generic;
+using HarmonyLib;
 using OptimalScrapsOrganization.Scripts;
 using UnityEngine;
 
@@ -17,10 +18,17 @@ public class PatchTerminal
         
         if (array[0].ToLower().Contains("reorder") || array[0].ToLower().Contains("reoder"))
         {
-
+            
             if (array.Length > 1 && array[1].ToLower().Contains("help"))
             {
-                __result = CreateTerminalNode("Commands :\n\n- reorder\n\n- reorder <valueRange>\n\n- reorder name\n\n- reorder type\n\n- reorder locker\n\n");
+                List<string> commands = new List<string>() { "reorder", "reorder <valueRange>", "reorder name", "reorder type", "reorder locker", "reorder locker <valueRange>", "reorder locker name", "reorder locker type"};
+                var commandsString = "Commands :";
+                commands.ForEach(c =>
+                {
+                    commandsString += $"\n\n- {c}";
+                });
+                
+                __result = CreateTerminalNode(commandsString);
                 return false;
             }
 
@@ -30,10 +38,17 @@ public class PatchTerminal
             
             if(array.Length > 1 && array[1].ToLower().Contains("name")) organizeBy = OrganizeBy.NAME;
             else if(array.Length > 1 && array[1].ToLower().Contains("type")) organizeBy = OrganizeBy.TYPE;
-            else if(array.Length > 1 && array[1].ToLower().Contains("locker"))
+            else if(array.Length > 1 && array[1].ToLower().Contains("locker")) organizeBy = OrganizeBy.LOCKER;
+            else if (array.Length > 1)
             {
-                organizeBy = OrganizeBy.LOCKER;
-                secondOrganizeBy = OptimalScrapsOrganizationPlugin.instance.defaultReorderType.Value;
+                organizeBy = OrganizeBy.VALUE;
+                int.TryParse(array[1], out value);
+            }
+
+            if (organizeBy == OrganizeBy.LOCKER)
+            {
+                secondOrganizeBy = OptimalScrapsOrganizationPlugin.instance.defaultLockerReorderType.Value;
+                if(secondOrganizeBy == OrganizeBy.LOCKER) secondOrganizeBy = OrganizeBy.VALUE;
                 if(array.Length > 2 && array[2].ToLower().Contains("name")) secondOrganizeBy = OrganizeBy.NAME;
                 else if(array.Length > 2 && array[2].ToLower().Contains("type")) secondOrganizeBy = OrganizeBy.TYPE;
                 else if(array.Length > 2)
@@ -41,11 +56,6 @@ public class PatchTerminal
                     secondOrganizeBy = OrganizeBy.VALUE;
                     int.TryParse(array[1], out value);
                 };
-            }
-            else if (array.Length > 1)
-            {
-                organizeBy = OrganizeBy.VALUE;
-                int.TryParse(array[1], out value);
             }
 
             OrganizeInformation organizeInformation = new OrganizeInformation();
@@ -58,6 +68,7 @@ public class PatchTerminal
             organizeInformation.exclusionList = OptimalScrapsOrganizationPlugin.instance.exclusionList.Value;
             organizeInformation.orderShopItems = OptimalScrapsOrganizationPlugin.instance.orderShopItems.Value;
             organizeInformation.orderPlacedItems = OptimalScrapsOrganizationPlugin.instance.orderPlacedItems.Value;
+            organizeInformation.distanceBetweenScrapsInLocker = OptimalScrapsOrganizationPlugin.instance.distanceBetweenScrapsInLocker.Value;
         
             
             NetworkOrganization.OrganizeScrapsServerRpc(organizeInformation);
@@ -86,7 +97,7 @@ public class PatchTerminal
         defaultMessage = ___terminalNodes.specialNodes[index].displayText;
 
         message = defaultMessage +=
-            $"\n\n>REORDER HELP\nTo see the list of {OptimalScrapsOrganizationPlugin.NAME} commands.\n";
+            $"\n>REORDER HELP\nTo see the list of {OptimalScrapsOrganizationPlugin.NAME} commands.\n";
 
         ___terminalNodes.specialNodes[index].displayText = message;
 
